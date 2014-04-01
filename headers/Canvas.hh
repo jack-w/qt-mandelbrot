@@ -14,17 +14,22 @@ class Canvas : public QWidget
 
     public:
         Canvas(QWidget *parent = 0);
+        ~Canvas();
+
+    protected:
+        void paintEvent(QPaintEvent *);
+        void mousePressEvent(QMouseEvent *);
+        void mouseMoveEvent(QMouseEvent *);
+        void mouseReleaseEvent(QMouseEvent *);
+        void resizeEvent(QResizeEvent *);
 
     private:
         void myDrawRect(const QPoint & endPoint);
 
-        void mousePressEvent(QMouseEvent *event);
-        void mouseMoveEvent(QMouseEvent *event);
-        void mouseReleaseEvent(QMouseEvent *event);
-        void paintEvent(QPaintEvent *event);
+        void resizeImage(QImage * image, const QSize & newSize);
 
-
-        QImage image;
+        QImage *image;
+        QImage *tmpImage;
         int penWidth;
         QColor penColor;
         QPoint lastPoint;

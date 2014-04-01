@@ -1,5 +1,6 @@
 #include <QApplication>
 #include "headers/MainWindow.hh"
+#include "headers/Canvas.hh"
 
 int main(int argc, char *argv[])
 {
