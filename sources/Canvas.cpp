@@ -1,14 +1,14 @@
 #include <QtGui>
+#include <QRubberBand>
 #include "../headers/Canvas.hh"
 
 
 Canvas::Canvas(QWidget *parent)
-    : QWidget(parent), penWidth(1), penColor(Qt::black), lastPoint(QPoint(0,0)), drawing(false)
+    : QWidget(parent), penWidth(1), penColor(Qt::black), firstPoint(QPoint(0,0)), drawing(false)
 {
     image = new QImage(width(),height(), QImage::Format_RGB32);
-    tmpImage = new QImage(width(),height(), QImage::Format_RGB32);
-    image->fill(qRgb(255,255,255));
-    tmpImage->fill(qRgb(255,255,255));
+    selection = new QRubberBand(QRubberBand::Rectangle, this);
+    image->fill(qRgb(55,155,255));
     setMinimumSize(QSize(300,300));
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     
@@ -17,26 +17,42 @@ Canvas::Canvas(QWidget *parent)
 Canvas::~Canvas()
 {
     delete image;
+    delete selection;
 }
 
 void Canvas::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
-    painter.drawImage(QPoint(0,0), *tmpImage);
+    painter.drawImage(QPoint(0,0), *image);
 }
 
 void Canvas::mousePressEvent(QMouseEvent * event)
 {
     if (event->button() == Qt::LeftButton) {
-        lastPoint = event->pos();
+        firstPoint = event->pos();
         drawing = true;
     }
 }
 
 void Canvas::mouseMoveEvent(QMouseEvent * event)
 {
+    int dx = event->pos().x()-firstPoint.x();
+    int dy = event->pos().y()-firstPoint.y();
     if ((event->buttons() & Qt::LeftButton) && drawing) {
-        myDrawRect(event->pos());
+        if (dx > 0 && dy > 0) {
+            selection->setGeometry(firstPoint.x(),firstPoint.y(),dx,dy);
+        }
+        else if (dx < 0 && dy > 0) {
+            selection->setGeometry(event->pos().x(),firstPoint.y(),-dx,dy);
+        }
+        else if (dx > 0 && dy < 0) {
+            selection->setGeometry(firstPoint.x(),event->pos().y(),dx,-dy);
+        }
+        else {
+            selection->setGeometry(event->pos().x(),event->pos().y(),-dx,-dy);
+        }
+
+        selection->show();
     }
 }
 
@@ -54,16 +70,6 @@ void Canvas::resizeEvent(QResizeEvent *event)
     update();
 }
 
-void Canvas::myDrawRect(const QPoint & endPoint)
-{
-    *tmpImage = *image;
-    QPainter painter(tmpImage);
-    painter.setPen(QPen(penColor,penWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-    painter.drawRect(lastPoint.x(), lastPoint.y(), endPoint.x()-lastPoint.x(), endPoint.y()-lastPoint.y());
-
-    int rad = (penWidth/2) + 50;
-    update(QRect(lastPoint,endPoint).normalized().adjusted(-rad,-rad,rad,rad));
-}
 
 void Canvas::resizeImage(QImage * image, const QSize & newSize)
 {
@@ -71,6 +77,7 @@ void Canvas::resizeImage(QImage * image, const QSize & newSize)
         return;
     }
     QImage newImage(newSize, QImage::Format_RGB32);
+    newImage.fill(qRgb(255,255,255));
 
     QPainter painter(&newImage);
     painter.drawImage(QPoint(0,0), *image);

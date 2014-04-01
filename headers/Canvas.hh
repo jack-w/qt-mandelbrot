@@ -2,6 +2,7 @@
 #define CANVAS_HH
 
 #include <QWidget>
+#include <QRubberBand>
 
 class QColor;
 class QImage;
@@ -24,15 +25,13 @@ class Canvas : public QWidget
         void resizeEvent(QResizeEvent *);
 
     private:
-        void myDrawRect(const QPoint & endPoint);
-
         void resizeImage(QImage * image, const QSize & newSize);
 
         QImage *image;
-        QImage *tmpImage;
+        QRubberBand *selection;
         int penWidth;
         QColor penColor;
-        QPoint lastPoint;
+        QPoint firstPoint;
         bool drawing;
 };
 
