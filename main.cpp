@@ -1,6 +1,7 @@
 #include <QApplication>
-#include "headers/MainWindow.hh"
-#include "headers/Canvas.hh"
+#include <QDebug>
+#include "src/headers/MainWindow.hh"
+#include "src/headers/Canvas.hh"
 
 int main(int argc, char *argv[])
 {
@@ -8,6 +9,7 @@ int main(int argc, char *argv[])
     MainWindow main;
 
     main.show();
+
 
 
 

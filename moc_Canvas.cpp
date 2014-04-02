@@ -1,13 +1,13 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'Canvas.hh'
 **
-** Created: Tue Apr 1 16:20:22 2014
+** Created: Wed Apr 2 15:18:10 2014
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.2)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
-#include "headers/Canvas.hh"
+#include "src/headers/Canvas.hh"
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'Canvas.hh' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 63
