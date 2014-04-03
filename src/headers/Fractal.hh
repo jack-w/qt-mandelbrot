@@ -10,8 +10,7 @@ struct colRange;
 struct Div
 {
     int it;
-    double mag;
-    QRgb color;
+    double norm;
 };
 
 struct colRange
@@ -44,6 +43,8 @@ class Fractal
         void calculateFractal();
         void setImage(QImage *image);
         QRgb (*getColor)(int,int,Div *,int,int,QList<colRange> clist);
+
+        void resize(int w, int h);
 
 
     private:

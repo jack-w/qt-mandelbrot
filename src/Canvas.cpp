@@ -18,8 +18,8 @@ Canvas::Canvas(QWidget *parent, int w, int h)
     setMinimumSize(QSize(300,300));
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    qDebug() << "Canvas - w: " << width() << ", h: " << height();
-    qDebug() << "Fractal - w: " << fractal->getWidth() << ", h: " << fractal->getHeight();
+//    qDebug() << "Canvas - w: " << width() << ", h: " << height();
+//    qDebug() << "Fractal - w: " << fractal->getWidth() << ", h: " << fractal->getHeight();
 
 }
 
@@ -66,11 +66,11 @@ void Canvas::mouseMoveEvent(QMouseEvent * event)
     }
 
 
-    qDebug()    << "("
-                << fractal->getA1()*event->pos().x()+fractal->getT1()
-                << ","
-                << fractal->getA2()*event->pos().y()+fractal->getT2()
-                << ")";
+//    qDebug()    << "("
+//                << fractal->getA1()*event->pos().x()+fractal->getT1()
+//                << ","
+//                << fractal->getA2()*event->pos().y()+fractal->getT2()
+//                << ")";
 }
 
 void Canvas::mouseReleaseEvent(QMouseEvent * event)
