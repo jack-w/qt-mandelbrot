@@ -1,3 +1,4 @@
+#include <cmath>
 #include <QtGui>
 #include <QRubberBand>
 #include <QDebug>
@@ -6,7 +7,13 @@
 
 
 Canvas::Canvas(QWidget *parent, int w, int h)
-    : QWidget(parent), penWidth(1), penColor(Qt::black), firstPoint(QPoint(0,0)), drawing(false)
+  : QWidget(parent), 
+    penWidth(1), 
+    penColor(Qt::black), 
+    firstPoint(QPoint(0,0)), 
+    drawing(false), 
+    zoomLevel(1.0),
+    autoIterations(true)
 {
     resize(QSize(w,h));
     fractal = new Fractal(width(), height());
@@ -84,7 +91,7 @@ void Canvas::resizeEvent(QResizeEvent *event)
 {
     resizeImage(fractal, event->size());
     fractal->draw();
-    qDebug() << fractal->width() << " , " << fractal->height() ;
+//    qDebug() << fractal->width() << " , " << fractal->height() ;
     update();
 }
 
@@ -104,6 +111,37 @@ void Canvas::resizeImage(Fractal * fractal, const QSize & newSize)
 
 void Canvas::zoomIn()
 {
+    setZoomLevel();
     fractal->changeView(firstPoint, secondPoint);
     fractal->draw();
+}
+
+void Canvas::setZoomLevel()
+{
+    double delta1, delta2;
+    double x1,y1, x2,y2;
+    double r1,i1, r2,i2;
+    x1 = firstPoint.x();
+    y1 = firstPoint.y();
+    x2 = secondPoint.x();
+    y2 = secondPoint.y();
+    delta1 = abs(x1 - x2);
+    delta2 = abs(y1 - y2);
+    r1 = fractal->getA1()*x1 + fractal->getT1();
+    i1 = fractal->getA2()*y1 + fractal->getT2();
+    r2 = fractal->getA1()*x2 + fractal->getT1();
+    i2 = fractal->getA2()*y2 + fractal->getT2();
+    if (width()/height() < delta1/delta2) {
+        zoomLevel = zoomLevel * abs((fractal->getRu() - fractal->getRl()) / (r1-r2));
+    }
+    else {
+        zoomLevel = zoomLevel * abs((fractal->getIu() - fractal->getIl()) / (i1-i2));
+    }
+
+//    qDebug() << zoomLevel;
+    if (autoIterations == true) {
+        fractal->setIterations(27*pow(zoomLevel,0.2)+100);
+        qDebug() << fractal->getIterations();
+    }
+
 }

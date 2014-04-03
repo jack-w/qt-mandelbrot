@@ -50,6 +50,8 @@ class Fractal : public QImage
         void draw();
 
         void changeView(QPoint p1, QPoint p2);
+        void setIterations(double);
+        int getIterations();
 
 
     private:

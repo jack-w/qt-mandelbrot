@@ -195,6 +195,15 @@ void Fractal::changeView(QPoint p1, QPoint p2)
     adjustRatio();
 }
 
+void Fractal::setIterations(double it)
+{
+    iterations = floor(it);
+}
+
+int Fractal::getIterations()
+{
+    return iterations;
+}
 
 QRgb grey(Data * data, int iterations, QList<colRange> clist)
 {
@@ -210,6 +219,7 @@ QRgb grey(Data * data, int iterations, QList<colRange> clist)
 
     return qRgb(icount,icount,icount);
 }
+
 
 void mandelbrot(Data *data, double & ar, double & ai, double & cr, double & ci, int & it, double & escape)
 {
