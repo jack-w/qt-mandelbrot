@@ -16,17 +16,57 @@ Fractal::Fractal(int w, int h)
     iterations(50),
     escape(4)
 {
-    div = new Div[w*h];
+    data = new Data[w*h];
     calc = mandelbrot;
     getColor = grey;
     adjustRatio();
 
+
 //    qDebug() << "Fractal :" << width();
+}
+
+Fractal::Fractal(Fractal & old)
+  : QImage(old.width(),old.height(),QImage::Format_RGB32),
+    rl(old.rl), 
+    ru(old.ru), 
+    il(old.il), 
+    iu(old.iu), 
+    cr(old.cr), 
+    ci(old.ci),
+    iterations(old.iterations),
+    escape(old.escape)
+{
+    data = new Data[width()*height()];
+    for (int i = 0; i < width()*height(); i++) {
+        (data+i)->it = (old.data+i)->it;
+        (data+i)->norm = (old.data+i)->norm;
+    }
+}
+
+Fractal & Fractal::operator=(Fractal & old)
+{
+    QImage::operator=(old);
+
+    rl = old.rl;
+    ru = old.ru;
+    il = old.il;
+    iu = old.iu;
+    cr = old.cr;
+    ci = old.ci;
+    iterations = old.iterations;
+    escape = old.escape;
+
+    adjustRatio();
+
+    delete [] data;
+    data = new Data[old.width()*old.height()];
+
+    return *this;
 }
 
 Fractal::~Fractal()
 {
-    delete [] div;
+    delete [] data;
 }
 
 void Fractal::adjustRatio()
@@ -105,8 +145,8 @@ void Fractal::calculateFractal()
         for (x = 0; x < width(); x++) {
             ar = A1*x + t1;
 //            qDebug() << x << "\t" << ar << "\t" << y << "\t" << ai;
-            calc((div+x+y*width()), ar,ai,cr,ci,iterations,escape);
-//            qDebug() << x << y << (div+x+y*width())->it;
+            calc((data+x+y*width()), ar,ai,cr,ci,iterations,escape);
+//            qDebug() << x << y << (data+x+y*width())->it;
         }
 //        qDebug() << "";
     }
@@ -118,29 +158,60 @@ void Fractal::setImage()
     int w=width();
     for (y = 0; y < height(); y++) {
         for (x = 0; x < width(); x++) {
-            setPixel(x,y,getColor((div+x+y*w),iterations,clist));
+            setPixel(x,y,getColor((data+x+y*w),iterations,clist));
         }
 //        qDebug() << "" ;
     }
 }
 
+void Fractal::draw()
+{
+    adjustRatio();
+    calculateFractal();
+    setImage();
+}
 
-QRgb grey(Div * div, int iterations, QList<colRange> clist)
+void Fractal::changeView(QPoint p1, QPoint p2)
+{
+    double x1=p1.x(),x2=p2.x(),y1=p1.y(),y2=p2.y();
+
+    if (x1 < x2) {
+        rl = A1*x1 + t1;
+        ru = A1*x2 + t1;
+    }
+    else {
+        rl = A1*x2 + t1;
+        ru = A1*x1 + t1;
+    }
+    if (y1 < y2) {
+        iu = A2*y1 + t2;
+        il = A2*y2 + t2;
+    }
+    else {
+        iu = A2*y2 + t2;
+        il = A2*y1 + t2;
+    }
+
+    adjustRatio();
+}
+
+
+QRgb grey(Data * data, int iterations, QList<colRange> clist)
 {
     int icount;
-    double count = (double)(div)->it + 5 - log(log(div->norm + 1))/log(2);
+    double count = (double)(data)->it + 5 - log(log(data->norm + 1))/log(2);
 
     if (count > iterations - 0.001) {
         return qRgb(0,0,0);
     }
     icount = floor(256.0*count/iterations);
 
-//    qDebug() << i << "\t" << j << "\t" << (div+i+j*width())->it;
+//    qDebug() << i << "\t" << j << "\t" << (data+i+j*width())->it;
 
     return qRgb(icount,icount,icount);
 }
 
-void mandelbrot(Div *div, double & ar, double & ai, double & cr, double & ci, int & it, double & escape)
+void mandelbrot(Data *data, double & ar, double & ai, double & cr, double & ci, int & it, double & escape)
 {
     double zr=0, zi=0, tmp=0;
     int i;
@@ -166,7 +237,7 @@ void mandelbrot(Div *div, double & ar, double & ai, double & cr, double & ci, in
 
     tmp = zr*zr + zi*zi;
 
-    div->it = i;
-//    qDebug() << div->it;
-    div->norm = tmp;
+    data->it = i;
+//    qDebug() << data->it;
+    data->norm = tmp;
 }

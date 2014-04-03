@@ -28,12 +28,13 @@ class Canvas : public QWidget
 
     private:
         void resizeImage(Fractal *fractal, const QSize & newSize);
+        void zoomIn();
 
         Fractal *fractal;
         QRubberBand *selection;
         int penWidth;
         QColor penColor;
-        QPoint firstPoint;
+        QPoint firstPoint, secondPoint;
         bool drawing;
 };
 

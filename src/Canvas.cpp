@@ -11,8 +11,7 @@ Canvas::Canvas(QWidget *parent, int w, int h)
     resize(QSize(w,h));
     fractal = new Fractal(width(), height());
     selection = new QRubberBand(QRubberBand::Rectangle, this);
-    fractal->calculateFractal();
-    fractal->setImage();
+    fractal->draw();
     setMinimumSize(QSize(300,300));
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
@@ -74,13 +73,18 @@ void Canvas::mouseReleaseEvent(QMouseEvent * event)
 {
     if (event->button() == Qt::LeftButton && drawing) {
         drawing = false;
-        
+        secondPoint = event->pos();
+        zoomIn();
+        update();
+        selection->hide();
     }
 }
 
 void Canvas::resizeEvent(QResizeEvent *event)
 {
     resizeImage(fractal, event->size());
+    fractal->draw();
+    qDebug() << fractal->width() << " , " << fractal->height() ;
     update();
 }
 
@@ -96,4 +100,10 @@ void Canvas::resizeImage(Fractal * fractal, const QSize & newSize)
     painter.drawImage(QPoint(0,0), *fractal);
 
     *fractal = newFractal;
+}
+
+void Canvas::zoomIn()
+{
+    fractal->changeView(firstPoint, secondPoint);
+    fractal->draw();
 }

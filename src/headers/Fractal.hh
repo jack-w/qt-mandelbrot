@@ -4,14 +4,14 @@
 class Fractal;
 class QImage;
 class QSize;
-struct Div;
+struct Data;
 struct colRange;
 
-void mandelbrot(Div *div, double & ar, double & ai, double & cr, double & ci, int & it, double & escape);
+void mandelbrot(Data *data, double & ar, double & ai, double & cr, double & ci, int & it, double & escape);
 
-QRgb grey(Div *,int,QList<colRange> clist);
+QRgb grey(Data *,int,QList<colRange> clist);
 
-struct Div
+struct Data
 {
     int it;
     double norm;
@@ -27,9 +27,11 @@ class Fractal : public QImage
 {
     public:
         Fractal(int width = 200, int height = 200);
+        Fractal(Fractal & old);
+        Fractal & operator=(Fractal & old);
         ~Fractal();
 
-        void (*calc)(Div *div, double & ar, double & ai, double & cr, double & ci, int & it, double & escape);
+        void (*calc)(Data *data, double & ar, double & ai, double & cr, double & ci, int & it, double & escape);
         void adjustRatio();
         double getRu();
         double getRl();
@@ -40,10 +42,14 @@ class Fractal : public QImage
         double getT1();
         double getT2();
 
+
         void calculateFractal();
         void setImage();
-        QRgb (*getColor)(Div *,int,QList<colRange> clist);
+        QRgb (*getColor)(Data *,int,QList<colRange> clist);
 
+        void draw();
+
+        void changeView(QPoint p1, QPoint p2);
 
 
     private:
@@ -52,7 +58,7 @@ class Fractal : public QImage
         double cr,ci;
         int iterations;
         double escape;
-        Div * div;
+        Data * data;
         QList<colRange> clist;
 
 };
