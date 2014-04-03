@@ -6,8 +6,7 @@
 
 
 Fractal::Fractal(int w, int h)
-  : width(w), 
-    height(h), 
+  : QImage(w,h,QImage::Format_RGB32), 
     rl(-2), 
     ru(2), 
     il(-2), 
@@ -22,7 +21,7 @@ Fractal::Fractal(int w, int h)
     getColor = grey;
     adjustRatio();
 
-//    qDebug() << "Fractal :" << width;
+//    qDebug() << "Fractal :" << width();
 }
 
 Fractal::~Fractal()
@@ -33,47 +32,28 @@ Fractal::~Fractal()
 void Fractal::adjustRatio()
 {
     double delta;
-    if (height > 0 && width > 0 && (iu-il) > 0) {
-        if (width/height > (ru-rl)/(iu-il)) {
-            delta = (width/height)*(iu-il);
+    if (height() > 0 && width() > 0 && (iu-il) > 0) {
+        if ((double)width()/height() > (ru-rl)/(iu-il)) {
+            delta = ((double)width()/height())*(iu-il);
             delta = delta - (ru-rl);
             ru += delta/2;
             rl -= delta/2;
         }
         else {
-            delta = (height/width)*(ru-rl);
+            delta = ((double)height()/width())*(ru-rl);
             delta = delta - (iu-il);
             iu += delta/2;
             il -= delta/2;
         }
-        A1 = (ru-rl) / width;
-        A2 = (il-iu) / height;
+        A1 = (ru-rl) / width();
+        A2 = (il-iu) / height();
         t1 = rl;
         t2 = iu;
 //        qDebug() << rl << " " << ru << " " << il << " " << iu ;
-//        qDebug() << A1*0+t1 << " " << A1*width+t1 << " " << A2*height+t2 << " " << A2*0+t2 ;
+//        qDebug() << A1*0+t1 << " " << A1*width()+t1 << " " << A2*height()+t2 << " " << A2*0+t2 ;
     }
 }
 
-void Fractal::setWidth(int w)
-{
-    width = w;
-}
-
-void Fractal::setHeight(int h)
-{
-    height = h;
-}
-
-int Fractal::getWidth()
-{
-    return width;
-}
-
-int Fractal::getHeight()
-{
-    return height;
-}
 
 double Fractal::getRu()
 {
@@ -120,52 +100,42 @@ void Fractal::calculateFractal()
     double ar, ai;
     int x,y;
 
-    for (y = 0; y < height; y++) {
+    for (y = 0; y < height(); y++) {
         ai = A2*y + t2;
-        for (x = 0; x < width; x++) {
+        for (x = 0; x < width(); x++) {
             ar = A1*x + t1;
 //            qDebug() << x << "\t" << ar << "\t" << y << "\t" << ai;
-            calc((div+x+y*width), ar,ai,cr,ci,iterations,escape);
-//            qDebug() << x << y << (div+x+y*width)->it;
+            calc((div+x+y*width()), ar,ai,cr,ci,iterations,escape);
+//            qDebug() << x << y << (div+x+y*width())->it;
         }
 //        qDebug() << "";
     }
 }
 
-void Fractal::setImage(QImage *image)
+void Fractal::setImage()
 {
     int x,y;
-    for (y = 0; y < height; y++) {
-        for (x = 0; x < width; x++) {
-            image->setPixel(x,y,getColor(x,y,div,width,iterations,clist));
+    int w=width();
+    for (y = 0; y < height(); y++) {
+        for (x = 0; x < width(); x++) {
+            setPixel(x,y,getColor((div+x+y*w),iterations,clist));
         }
 //        qDebug() << "" ;
     }
 }
 
-void Fractal::resize(int w, int h)
-{
-    setWidth(w);
-    setHeight(h);
-    delete [] div;
-    div = new Div[w*h];
 
-    adjustRatio();
-    calculateFractal();
-
-}
-
-QRgb grey(int i, int j, Div * div, int width, int iterations, QList<colRange> clist)
+QRgb grey(Div * div, int iterations, QList<colRange> clist)
 {
     int icount;
-    double count = (double)(div+i+j*width)->it + 5 - log(log((div+i+j*width)->norm + 1))/log(2);
+    double count = (double)(div)->it + 5 - log(log(div->norm + 1))/log(2);
 
     if (count > iterations - 0.001) {
         return qRgb(0,0,0);
     }
     icount = floor(256.0*count/iterations);
 
-//    qDebug() << i << "\t" << j << "\t" << (div+i+j*width)->it;
+//    qDebug() << i << "\t" << j << "\t" << (div+i+j*width())->it;
 
     return qRgb(icount,icount,icount);
 }

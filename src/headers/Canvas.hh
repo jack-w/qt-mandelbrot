@@ -27,9 +27,8 @@ class Canvas : public QWidget
         void resizeEvent(QResizeEvent *);
 
     private:
-        void resizeImage(QImage * image, const QSize & newSize);
+        void resizeImage(Fractal *fractal, const QSize & newSize);
 
-        QImage *image;
         Fractal *fractal;
         QRubberBand *selection;
         int penWidth;

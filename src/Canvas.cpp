@@ -9,12 +9,10 @@ Canvas::Canvas(QWidget *parent, int w, int h)
     : QWidget(parent), penWidth(1), penColor(Qt::black), firstPoint(QPoint(0,0)), drawing(false)
 {
     resize(QSize(w,h));
-    image = new QImage(width(),height(), QImage::Format_RGB32);
     fractal = new Fractal(width(), height());
     selection = new QRubberBand(QRubberBand::Rectangle, this);
-    image->fill(qRgb(55,155,255));
     fractal->calculateFractal();
-    fractal->setImage(image);
+    fractal->setImage();
     setMinimumSize(QSize(300,300));
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
@@ -25,7 +23,6 @@ Canvas::Canvas(QWidget *parent, int w, int h)
 
 Canvas::~Canvas()
 {
-    delete image;
     delete fractal;
     delete selection;
 }
@@ -33,7 +30,7 @@ Canvas::~Canvas()
 void Canvas::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
-    painter.drawImage(QPoint(0,0), *image);
+    painter.drawImage(QPoint(0,0), *fractal);
 }
 
 void Canvas::mousePressEvent(QMouseEvent * event)
@@ -83,21 +80,20 @@ void Canvas::mouseReleaseEvent(QMouseEvent * event)
 
 void Canvas::resizeEvent(QResizeEvent *event)
 {
-    resizeImage(image, event->size());
+    resizeImage(fractal, event->size());
     update();
 }
 
 
-void Canvas::resizeImage(QImage * image, const QSize & newSize)
+void Canvas::resizeImage(Fractal * fractal, const QSize & newSize)
 {
-    if (image->size() == newSize) {
+    if (fractal->size() == newSize) {
         return;
     }
-    QImage newImage(newSize, QImage::Format_RGB32);
-    newImage.fill(qRgb(255,255,255));
+    Fractal newFractal(newSize.width(),newSize.height());
 
-    QPainter painter(&newImage);
-    painter.drawImage(QPoint(0,0), *image);
+    QPainter painter(&newFractal);
+    painter.drawImage(QPoint(0,0), *fractal);
 
-    *image = newImage;
+    *fractal = newFractal;
 }
