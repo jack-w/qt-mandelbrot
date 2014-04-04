@@ -24,7 +24,7 @@ Canvas::Canvas(QWidget *parent, int w, int h)
     selection = new QRubberBand(QRubberBand::Rectangle, this);
     selection->setPalette(palette);
 
-    qDebug() << "Canvas - w: " << width() << ", h: " << height();
+//    qDebug() << "Canvas - w: " << width() << ", h: " << height();
 //    qDebug() << "Fractal - w: " << fractal->getWidth() << ", h: " << fractal->getHeight();
 
 }

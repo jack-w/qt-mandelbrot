@@ -37,13 +37,14 @@ void MainWindow::reset()
 void MainWindow::createMenus()
 {
     fileMenu = menuBar()->addMenu( tr("&File") );
+    fileMenu->addAction(saveAsAct);
+    fileMenu->addSeparator();
     fileMenu->addAction(quitAct);
 }
 
 void MainWindow::createToolBars()
 {
     toolBar = addToolBar(tr("File"));
-    toolBar->addAction(saveAsAct);
     toolBar->addAction(resetAct);
 }
 
@@ -53,7 +54,7 @@ void MainWindow::createActions()
     saveAsAct->setShortcut(tr("Ctrl+Shift+S"));
     connect(saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
 
-    quitAct = new QAction(tr("&quit"), this);
+    quitAct = new QAction(tr("&Quit"), this);
     quitAct->setShortcut(tr("Alt+q"));
     connect(quitAct, SIGNAL(triggered()), qApp, SLOT(quit()));
 
