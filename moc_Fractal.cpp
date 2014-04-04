@@ -1,15 +1,15 @@
 /****************************************************************************
-** Meta object code from reading C++ file 'Canvas.hh'
+** Meta object code from reading C++ file 'Fractal.hh'
 **
-** Created: Fri Apr 4 10:58:17 2014
+** Created: Fri Apr 4 09:31:05 2014
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.2)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
-#include "src/headers/Canvas.hh"
+#include "src/headers/Fractal.hh"
 #if !defined(Q_MOC_OUTPUT_REVISION)
-#error "The header file 'Canvas.hh' doesn't include <QObject>."
+#error "The header file 'Fractal.hh' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 63
 #error "This file was generated using the moc from 4.8.2. It"
 #error "cannot be used with the include files from this version of Qt."
@@ -17,7 +17,7 @@
 #endif
 
 QT_BEGIN_MOC_NAMESPACE
-static const uint qt_meta_data_Canvas[] = {
+static const uint qt_meta_data_Fractal[] = {
 
  // content:
        6,       // revision
@@ -33,11 +33,11 @@ static const uint qt_meta_data_Canvas[] = {
        0        // eod
 };
 
-static const char qt_meta_stringdata_Canvas[] = {
-    "Canvas\0"
+static const char qt_meta_stringdata_Fractal[] = {
+    "Fractal\0"
 };
 
-void Canvas::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+void Fractal::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
 {
     Q_UNUSED(_o);
     Q_UNUSED(_id);
@@ -45,35 +45,35 @@ void Canvas::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void
     Q_UNUSED(_a);
 }
 
-const QMetaObjectExtraData Canvas::staticMetaObjectExtraData = {
+const QMetaObjectExtraData Fractal::staticMetaObjectExtraData = {
     0,  qt_static_metacall 
 };
 
-const QMetaObject Canvas::staticMetaObject = {
-    { &QWidget::staticMetaObject, qt_meta_stringdata_Canvas,
-      qt_meta_data_Canvas, &staticMetaObjectExtraData }
+const QMetaObject Fractal::staticMetaObject = {
+    { &QImage::staticMetaObject, qt_meta_stringdata_Fractal,
+      qt_meta_data_Fractal, &staticMetaObjectExtraData }
 };
 
 #ifdef Q_NO_DATA_RELOCATION
-const QMetaObject &Canvas::getStaticMetaObject() { return staticMetaObject; }
+const QMetaObject &Fractal::getStaticMetaObject() { return staticMetaObject; }
 #endif //Q_NO_DATA_RELOCATION
 
-const QMetaObject *Canvas::metaObject() const
+const QMetaObject *Fractal::metaObject() const
 {
     return QObject::d_ptr->metaObject ? QObject::d_ptr->metaObject : &staticMetaObject;
 }
 
-void *Canvas::qt_metacast(const char *_clname)
+void *Fractal::qt_metacast(const char *_clname)
 {
     if (!_clname) return 0;
-    if (!strcmp(_clname, qt_meta_stringdata_Canvas))
-        return static_cast<void*>(const_cast< Canvas*>(this));
-    return QWidget::qt_metacast(_clname);
+    if (!strcmp(_clname, qt_meta_stringdata_Fractal))
+        return static_cast<void*>(const_cast< Fractal*>(this));
+    return QImage::qt_metacast(_clname);
 }
 
-int Canvas::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+int Fractal::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
-    _id = QWidget::qt_metacall(_c, _id, _a);
+    _id = QImage::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
     return _id;

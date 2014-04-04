@@ -7,15 +7,28 @@ class Canvas;
 
 class MainWindow : public QMainWindow
 {
+    Q_OBJECT
 public:
     MainWindow();
     ~MainWindow();
 
+private slots:
+    void saveAs();
+    void reset();
+
 private:
     void createMenus();
+    void createToolBars();
+    void createActions();
+
+    Canvas *canvas;
 
     QMenu *fileMenu;
-    Canvas *canvas;
+    QToolBar *toolBar;
+
+    QAction *resetAct;
+    QAction *saveAsAct;
+    QAction *quitAct;
 };
 
 #endif

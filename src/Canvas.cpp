@@ -8,8 +8,6 @@
 
 Canvas::Canvas(QWidget *parent, int w, int h)
   : QWidget(parent), 
-    penWidth(1), 
-    penColor(Qt::black), 
     firstPoint(QPoint(0,0)), 
     drawing(false), 
     zoomLevel(1.0),
@@ -17,12 +15,16 @@ Canvas::Canvas(QWidget *parent, int w, int h)
 {
     resize(QSize(w,h));
     fractal = new Fractal(width(), height());
-    selection = new QRubberBand(QRubberBand::Rectangle, this);
     fractal->draw();
     setMinimumSize(QSize(300,300));
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-//    qDebug() << "Canvas - w: " << width() << ", h: " << height();
+    QPalette palette;
+    palette.setBrush(QPalette::Foreground, QBrush(Qt::red));
+    selection = new QRubberBand(QRubberBand::Rectangle, this);
+    selection->setPalette(palette);
+
+    qDebug() << "Canvas - w: " << width() << ", h: " << height();
 //    qDebug() << "Fractal - w: " << fractal->getWidth() << ", h: " << fractal->getHeight();
 
 }
@@ -31,6 +33,19 @@ Canvas::~Canvas()
 {
     delete fractal;
     delete selection;
+}
+
+bool Canvas::saveImage(const QString & fileName, const char * fileFormat)
+{
+    return fractal->save(fileName, fileFormat);
+}
+
+void Canvas::reset()
+{
+    zoomLevel = 1.0;
+    fractal->reset();
+    fractal->draw();
+    update();
 }
 
 void Canvas::paintEvent(QPaintEvent *)
@@ -106,6 +121,16 @@ void Canvas::resizeImage(Fractal * fractal, const QSize & newSize)
     QPainter painter(&newFractal);
     painter.drawImage(QPoint(0,0), *fractal);
 
+    newFractal.setRu(fractal->getRu());
+    newFractal.setRl(fractal->getRl());
+    newFractal.setIu(fractal->getIu());
+    newFractal.setIl(fractal->getIl());
+    newFractal.setA1(fractal->getA1());
+    newFractal.setA2(fractal->getA2());
+    newFractal.setT1(fractal->getT1());
+    newFractal.setT2(fractal->getT2());
+    newFractal.setIterations(fractal->getIterations());
+
     *fractal = newFractal;
 }
 
@@ -140,7 +165,7 @@ void Canvas::setZoomLevel()
 
 //    qDebug() << zoomLevel;
     if (autoIterations == true) {
-        fractal->setIterations(27*pow(zoomLevel,0.2)+100);
+        fractal->setIterations(27*pow(zoomLevel,0.29)+100);
         qDebug() << fractal->getIterations();
     }
 

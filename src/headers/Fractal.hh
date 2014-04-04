@@ -25,6 +25,7 @@ struct colRange
 
 class Fractal : public QImage
 {
+//    Q_OBJECT
     public:
         Fractal(int width = 200, int height = 200);
         Fractal(Fractal & old);
@@ -33,6 +34,7 @@ class Fractal : public QImage
 
         void (*calc)(Data *data, double & ar, double & ai, double & cr, double & ci, int & it, double & escape);
         void adjustRatio();
+
         double getRu();
         double getRl();
         double getIu();
@@ -41,7 +43,19 @@ class Fractal : public QImage
         double getA2();
         double getT1();
         double getT2();
+        int getIterations();
 
+        void setRu(double );
+        void setRl(double );
+        void setIu(double );
+        void setIl(double );
+        void setA1(double );
+        void setA2(double );
+        void setT1(double );
+        void setT2(double );
+        void setIterations(double);
+
+        void reset();
 
         void calculateFractal();
         void setImage();
@@ -50,8 +64,6 @@ class Fractal : public QImage
         void draw();
 
         void changeView(QPoint p1, QPoint p2);
-        void setIterations(double);
-        int getIterations();
 
 
     private:

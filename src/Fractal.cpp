@@ -135,6 +135,67 @@ double Fractal::getT2()
     return t2;
 }
 
+int Fractal::getIterations()
+{
+    return iterations;
+}
+
+void Fractal::setRu(double d)
+{
+    ru = d;
+}
+
+void Fractal::setRl(double d)
+{
+    rl = d;
+}
+
+void Fractal::setIu(double d)
+{
+    iu = d;
+}
+
+void Fractal::setIl(double d)
+{
+    il = d;
+}
+
+void Fractal::setA1(double d)
+{
+    A1 = d;
+}
+
+void Fractal::setA2(double d)
+{
+    A2 = d;
+}
+
+void Fractal::setT1(double d)
+{
+    t1 = d;
+}
+
+void Fractal::setT2(double d)
+{
+    t2 = d;
+}
+
+void Fractal::setIterations(double it)
+{
+    iterations = floor(it);
+}
+
+
+void Fractal::reset()
+{
+    ru = 2;
+    rl = -2;
+    iu = 2;
+    il = -2;
+    iterations = 100;
+    adjustRatio();
+}
+
 void Fractal::calculateFractal()
 {
     double ar, ai;
@@ -195,15 +256,6 @@ void Fractal::changeView(QPoint p1, QPoint p2)
     adjustRatio();
 }
 
-void Fractal::setIterations(double it)
-{
-    iterations = floor(it);
-}
-
-int Fractal::getIterations()
-{
-    return iterations;
-}
 
 QRgb grey(Data * data, int iterations, QList<colRange> clist)
 {

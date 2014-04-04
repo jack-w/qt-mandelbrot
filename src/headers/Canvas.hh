@@ -18,6 +18,9 @@ class Canvas : public QWidget
         Canvas(QWidget *parent = 0, int w = 300, int h = 300);
         ~Canvas();
 
+        bool saveImage(const QString & fileName, const char * fileFormat = NULL);
+        void reset();
+
 
     protected:
         void paintEvent(QPaintEvent *);
@@ -33,8 +36,6 @@ class Canvas : public QWidget
 
         Fractal *fractal;
         QRubberBand *selection;
-        int penWidth;
-        QColor penColor;
         QPoint firstPoint, secondPoint;
         bool drawing;
         double zoomLevel;
