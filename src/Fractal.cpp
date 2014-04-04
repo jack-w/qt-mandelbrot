@@ -10,12 +10,13 @@ Fractal::Fractal(int w, int h)
     rl(-2), 
     ru(2), 
     il(-2), 
-    iu(2), 
-    cr(0), 
-    ci(0),
-    iterations(50),
-    escape(4)
+    iu(2) 
 {
+    arg.cr = 0;
+    arg.ci = 0;
+    arg.iterations = 100;
+    arg.escape = 4;
+    arg.innerColor = qRgb(0,0,0);
     data = new Data[w*h];
     calc = mandelbrot;
     getColor = grey;
@@ -30,12 +31,13 @@ Fractal::Fractal(Fractal & old)
     rl(old.rl), 
     ru(old.ru), 
     il(old.il), 
-    iu(old.iu), 
-    cr(old.cr), 
-    ci(old.ci),
-    iterations(old.iterations),
-    escape(old.escape)
+    iu(old.iu) 
 {
+    arg.cr = 0;
+    arg.ci = 0;
+    arg.iterations = 100;
+    arg.escape = 4;
+    arg.innerColor = qRgb(0,0,0);
     data = new Data[width()*height()];
     for (int i = 0; i < width()*height(); i++) {
         (data+i)->it = (old.data+i)->it;
@@ -51,10 +53,11 @@ Fractal & Fractal::operator=(Fractal & old)
     ru = old.ru;
     il = old.il;
     iu = old.iu;
-    cr = old.cr;
-    ci = old.ci;
-    iterations = old.iterations;
-    escape = old.escape;
+    arg.cr = old.arg.cr;
+    arg.ci = old.arg.ci;
+    arg.iterations = old.arg.iterations;
+    arg.escape = old.arg.escape;
+    arg.innerColor = old.arg.innerColor;
 
     adjustRatio();
 
@@ -85,10 +88,10 @@ void Fractal::adjustRatio()
             iu += delta/2;
             il -= delta/2;
         }
-        A1 = (ru-rl) / width();
-        A2 = (il-iu) / height();
-        t1 = rl;
-        t2 = iu;
+        arg.A1 = (ru-rl) / width();
+        arg.A2 = (il-iu) / height();
+        arg.t1 = rl;
+        arg.t2 = iu;
 //        qDebug() << rl << " " << ru << " " << il << " " << iu ;
 //        qDebug() << A1*0+t1 << " " << A1*width()+t1 << " " << A2*height()+t2 << " " << A2*0+t2 ;
     }
@@ -115,29 +118,14 @@ double Fractal::getIl()
     return il;
 }
 
-double Fractal::getA1()
+Arg Fractal::getArg()
 {
-    return A1;
+    return arg;
 }
 
-double Fractal::getA2()
+QList<colRange> & Fractal::accessCList()
 {
-    return A2;
-}
-
-double Fractal::getT1()
-{
-    return t1;
-}
-
-double Fractal::getT2()
-{
-    return t2;
-}
-
-int Fractal::getIterations()
-{
-    return iterations;
+    return arg.clist;
 }
 
 void Fractal::setRu(double d)
@@ -162,27 +150,27 @@ void Fractal::setIl(double d)
 
 void Fractal::setA1(double d)
 {
-    A1 = d;
+    arg.A1 = d;
 }
 
 void Fractal::setA2(double d)
 {
-    A2 = d;
+    arg.A2 = d;
 }
 
 void Fractal::setT1(double d)
 {
-    t1 = d;
+    arg.t1 = d;
 }
 
 void Fractal::setT2(double d)
 {
-    t2 = d;
+    arg.t2 = d;
 }
 
 void Fractal::setIterations(double it)
 {
-    iterations = floor(it);
+    arg.iterations = floor(it);
 }
 
 
@@ -192,21 +180,20 @@ void Fractal::reset()
     rl = -2;
     iu = 2;
     il = -2;
-    iterations = 100;
+    arg.iterations = 100;
     adjustRatio();
 }
 
 void Fractal::calculateFractal()
 {
-    double ar, ai;
     int x,y;
 
     for (y = 0; y < height(); y++) {
-        ai = A2*y + t2;
+        arg.ai = arg.A2*y + arg.t2;
         for (x = 0; x < width(); x++) {
-            ar = A1*x + t1;
+            arg.ar = arg.A1*x + arg.t1;
 //            qDebug() << x << "\t" << ar << "\t" << y << "\t" << ai;
-            calc((data+x+y*width()), ar,ai,cr,ci,iterations,escape);
+            calc((data+x+y*width()), arg);
 //            qDebug() << x << y << (data+x+y*width())->it;
         }
 //        qDebug() << "";
@@ -219,7 +206,7 @@ void Fractal::setImage()
     int w=width();
     for (y = 0; y < height(); y++) {
         for (x = 0; x < width(); x++) {
-            setPixel(x,y,getColor((data+x+y*w),iterations,clist));
+            setPixel(x,y,getColor((data+x+y*w),arg));
         }
 //        qDebug() << "" ;
     }
@@ -237,35 +224,38 @@ void Fractal::changeView(QPoint p1, QPoint p2)
     double x1=p1.x(),x2=p2.x(),y1=p1.y(),y2=p2.y();
 
     if (x1 < x2) {
-        rl = A1*x1 + t1;
-        ru = A1*x2 + t1;
+        rl = arg.A1*x1 + arg.t1;
+        ru = arg.A1*x2 + arg.t1;
     }
     else {
-        rl = A1*x2 + t1;
-        ru = A1*x1 + t1;
+        rl = arg.A1*x2 + arg.t1;
+        ru = arg.A1*x1 + arg.t1;
     }
     if (y1 < y2) {
-        iu = A2*y1 + t2;
-        il = A2*y2 + t2;
+        iu = arg.A2*y1 + arg.t2;
+        il = arg.A2*y2 + arg.t2;
     }
     else {
-        iu = A2*y2 + t2;
-        il = A2*y1 + t2;
+        iu = arg.A2*y2 + arg.t2;
+        il = arg.A2*y1 + arg.t2;
     }
 
     adjustRatio();
 }
 
 
-QRgb grey(Data * data, int iterations, QList<colRange> clist)
+QRgb grey(Data * data, Arg & arg)
 {
     int icount;
-    double count = (double)(data)->it + 5 - log(log(data->norm + 1))/log(2);
+    double count = (double)(data)->it;
 
-    if (count > iterations - 0.001) {
-        return qRgb(0,0,0);
+    if (count > arg.iterations - 0.001) {
+        return arg.innerColor;
     }
-    icount = floor(256.0*count/iterations);
+    
+    count = count + 5 - log(log(data->norm + 1))/log(2);
+
+    icount = floor(256.0*count/arg.iterations);
 
 //    qDebug() << i << "\t" << j << "\t" << (data+i+j*width())->it;
 
@@ -273,29 +263,29 @@ QRgb grey(Data * data, int iterations, QList<colRange> clist)
 }
 
 
-void mandelbrot(Data *data, double & ar, double & ai, double & cr, double & ci, int & it, double & escape)
+void mandelbrot(Data *data, Arg & arg)
 {
     double zr=0, zi=0, tmp=0;
     int i;
-    for (i = 0; i < it && tmp < escape; i++) {
+    for (i = 0; i < arg.iterations && tmp < arg.escape; i++) {
         tmp = zr;
-        zr = (zr + zi)*(zr - zi) + ar;
-        zi = 2*tmp*zi + ai;
+        zr = (zr + zi)*(zr - zi) + arg.ar;
+        zi = 2*tmp*zi + arg.ai;
 
         tmp = zr*zr + zi*zi;
     }
     tmp = zr;
-    zr = (zr + zi)*(zr - zi) + ar;
-    zi = 2*tmp*zi + ai;
+    zr = (zr + zi)*(zr - zi) + arg.ar;
+    zi = 2*tmp*zi + arg.ai;
     tmp = zr;
-    zr = (zr + zi)*(zr - zi) + ar;
-    zi = 2*tmp*zi + ai;
+    zr = (zr + zi)*(zr - zi) + arg.ar;
+    zi = 2*tmp*zi + arg.ai;
     tmp = zr;
-    zr = (zr + zi)*(zr - zi) + ar;
-    zi = 2*tmp*zi + ai;
+    zr = (zr + zi)*(zr - zi) + arg.ar;
+    zi = 2*tmp*zi + arg.ai;
     tmp = zr;
-    zr = (zr + zi)*(zr - zi) + ar;
-    zi = 2*tmp*zi + ai;
+    zr = (zr + zi)*(zr - zi) + arg.ar;
+    zi = 2*tmp*zi + arg.ai;
 
     tmp = zr*zr + zi*zi;
 

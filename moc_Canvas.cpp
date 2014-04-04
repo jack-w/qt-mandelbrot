@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'Canvas.hh'
 **
-** Created: Fri Apr 4 10:58:17 2014
+** Created: Fri Apr 4 16:29:46 2014
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.2)
 **
 ** WARNING! All changes made in this file will be lost!

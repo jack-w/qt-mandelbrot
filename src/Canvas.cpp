@@ -56,7 +56,7 @@ void Canvas::paintEvent(QPaintEvent *)
 
 void Canvas::mousePressEvent(QMouseEvent * event)
 {
-    if (event->button() == Qt::LeftButton) {
+    if (event->button() == Qt::LeftButton && !drawing) {
         firstPoint = event->pos();
         drawing = true;
     }
@@ -94,11 +94,11 @@ void Canvas::mouseMoveEvent(QMouseEvent * event)
 void Canvas::mouseReleaseEvent(QMouseEvent * event)
 {
     if (event->button() == Qt::LeftButton && drawing) {
-        drawing = false;
         secondPoint = event->pos();
         zoomIn();
         update();
         selection->hide();
+        drawing = false;
     }
 }
 
@@ -125,13 +125,14 @@ void Canvas::resizeImage(Fractal * fractal, const QSize & newSize)
     newFractal.setRl(fractal->getRl());
     newFractal.setIu(fractal->getIu());
     newFractal.setIl(fractal->getIl());
-    newFractal.setA1(fractal->getA1());
-    newFractal.setA2(fractal->getA2());
-    newFractal.setT1(fractal->getT1());
-    newFractal.setT2(fractal->getT2());
-    newFractal.setIterations(fractal->getIterations());
+    newFractal.setA1(fractal->getArg().A1);
+    newFractal.setA2(fractal->getArg().A2);
+    newFractal.setT1(fractal->getArg().t1);
+    newFractal.setT2(fractal->getArg().t2);
+    newFractal.setIterations(fractal->getArg().iterations);
 
     *fractal = newFractal;
+
 }
 
 void Canvas::zoomIn()
@@ -152,10 +153,10 @@ void Canvas::setZoomLevel()
     y2 = secondPoint.y();
     delta1 = abs(x1 - x2);
     delta2 = abs(y1 - y2);
-    r1 = fractal->getA1()*x1 + fractal->getT1();
-    i1 = fractal->getA2()*y1 + fractal->getT2();
-    r2 = fractal->getA1()*x2 + fractal->getT1();
-    i2 = fractal->getA2()*y2 + fractal->getT2();
+    r1 = fractal->getArg().A1*x1 + fractal->getArg().t1;
+    i1 = fractal->getArg().A2*y1 + fractal->getArg().t2;
+    r2 = fractal->getArg().A1*x2 + fractal->getArg().t1;
+    i2 = fractal->getArg().A2*y2 + fractal->getArg().t2;
     if (width()/height() < delta1/delta2) {
         zoomLevel = zoomLevel * abs((fractal->getRu() - fractal->getRl()) / (r1-r2));
     }
@@ -166,7 +167,7 @@ void Canvas::setZoomLevel()
 //    qDebug() << zoomLevel;
     if (autoIterations == true) {
         fractal->setIterations(27*pow(zoomLevel,0.29)+100);
-        qDebug() << fractal->getIterations();
+        qDebug() << fractal->getArg().iterations;
     }
 
 }

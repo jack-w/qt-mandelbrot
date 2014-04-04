@@ -6,10 +6,11 @@ class QImage;
 class QSize;
 struct Data;
 struct colRange;
+struct Arg;
 
-void mandelbrot(Data *data, double & ar, double & ai, double & cr, double & ci, int & it, double & escape);
+void mandelbrot(Data *data, Arg & arg);
 
-QRgb grey(Data *,int,QList<colRange> clist);
+QRgb grey(Data *,Arg & arg);
 
 struct Data
 {
@@ -23,6 +24,23 @@ struct colRange
     QRgb c;
 };
 
+struct Arg
+{
+    double A1;
+    double A2;
+    double t1;
+    double t2;
+
+    double ar;
+    double ai;
+    double cr;
+    double ci;
+    double iterations;
+    double escape;
+    QRgb innerColor;
+    QList<colRange> clist;
+};
+
 class Fractal : public QImage
 {
 //    Q_OBJECT
@@ -32,18 +50,16 @@ class Fractal : public QImage
         Fractal & operator=(Fractal & old);
         ~Fractal();
 
-        void (*calc)(Data *data, double & ar, double & ai, double & cr, double & ci, int & it, double & escape);
+        void (*calc)(Data *data, Arg & arg);
         void adjustRatio();
 
         double getRu();
         double getRl();
         double getIu();
         double getIl();
-        double getA1();
-        double getA2();
-        double getT1();
-        double getT2();
-        int getIterations();
+        Arg getArg();
+
+        QList<colRange> & accessCList();
 
         void setRu(double );
         void setRl(double );
@@ -59,7 +75,7 @@ class Fractal : public QImage
 
         void calculateFractal();
         void setImage();
-        QRgb (*getColor)(Data *,int,QList<colRange> clist);
+        QRgb (*getColor)(Data *data,Arg & arg);
 
         void draw();
 
@@ -68,12 +84,8 @@ class Fractal : public QImage
 
     private:
         double rl,ru,il,iu;
-        double A1, A2, t1, t2;
-        double cr,ci;
-        int iterations;
-        double escape;
+        Arg arg;
         Data * data;
-        QList<colRange> clist;
 
 };
 
